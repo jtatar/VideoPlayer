@@ -1,10 +1,12 @@
 import { getVideoDurationInSeconds } from 'get-video-duration';
+import SSE from 'express-sse-ts';
 
 class VideoPlayer {
   private _videoSrc = 'https://media.w3.org/2010/05/sintel/trailer_hd.mp4';
   private _isPlaying = false;
   private _videoTime = 0;
   private _videoLength = 0;
+  private client?: SSE;
 
   get videoSrc() {
     return this._videoSrc;
@@ -34,11 +36,24 @@ class VideoPlayer {
     this._videoLength = value;
   }
 
+  initializeClient(initializedClient: SSE) {
+    this.client = initializedClient;
+  }
+
   async loadNewVideo(src: string) {
     try {
       const response = await getVideoDurationInSeconds(src);
       this._videoSrc = src;
       this.videoLength = response;
+      if (this.client) {
+        this.client.send(
+          JSON.stringify({
+            videoSrc: this.videoSrc,
+            videoLength: this.videoLength,
+          }),
+          'loadNewVideo'
+        );
+      }
       return 'Changed video successfully';
     } catch (err) {
       console.log(err);

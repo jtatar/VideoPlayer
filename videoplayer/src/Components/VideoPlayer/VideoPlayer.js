@@ -6,7 +6,10 @@ const VideoPlayer = () => {
   const [videoSrc, setvideoSrc] = useState('');
 
   useEffect(async () => {
-    const response = await axios.get('localhost:3001/videoData');
+    const es = new EventSource('http://localhost:3001/api/updates');
+    es.addEventListener('loadNewVideo', (event) => {
+      console.log(event);
+    });
   }, []);
 
   return (

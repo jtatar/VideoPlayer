@@ -1,14 +1,12 @@
-import express, { Request, response, Response } from 'express';
+import express, { NextFunction, Request, response, Response } from 'express';
+import SSE from 'express-sse-ts';
 import { videoPlayer } from '../videoplayer';
 
 const router = express.Router();
+const sse = new SSE();
 
-router.get('/api/updates', async (req: Request, res: Response) => {
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    Connection: 'keep-alive',
-  });
+router.get('/api/updates', sse.init, () => {
+  videoPlayer.initializeClient(sse);
 });
 
-export { router as indexVideoRouter };
+export { router as updatesVideoRouter };
