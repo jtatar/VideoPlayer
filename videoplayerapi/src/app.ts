@@ -4,6 +4,8 @@ import { json } from 'body-parser';
 import { indexVideoRouter } from './routes';
 import { setVideoRouter } from './routes/set';
 import { updatesVideoRouter } from './routes/update';
+import { startVideoRouter } from './routes/start';
+import { pauseVideoRouter } from './routes/stop';
 
 const app = express();
 app.use(function (req, res, next) {
@@ -17,6 +19,8 @@ app.use(function (req, res, next) {
 app.set('trust proxy', true);
 app.use(json());
 
+app.use(startVideoRouter);
+app.use(pauseVideoRouter);
 app.use(updatesVideoRouter);
 app.use(indexVideoRouter);
 app.use(setVideoRouter);

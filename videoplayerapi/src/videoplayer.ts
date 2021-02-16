@@ -1,11 +1,19 @@
 import { getVideoDurationInSeconds } from 'get-video-duration';
+import { Subjects } from '@jtatvideo/common';
 import SSE from 'express-sse-ts';
+
+interface VideoEvent {
+  videoSrc?: string;
+  isPlaying?: boolean;
+  videoTime?: number;
+}
 
 class VideoPlayer {
   private _videoSrc = 'https://media.w3.org/2010/05/sintel/trailer_hd.mp4';
   private _isPlaying = false;
   private _videoTime = 0;
   private _videoLength = 0;
+  private intervalId: NodeJS.Timeout | undefined;
   private client?: SSE;
 
   get videoSrc() {
@@ -42,32 +50,63 @@ class VideoPlayer {
 
   async loadNewVideo(src: string) {
     try {
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+        this.intervalId = undefined;
+      }
       const response = await getVideoDurationInSeconds(src);
       this._videoSrc = src;
+      this.videoTime = 0;
+      this.isPlaying = false;
       this.videoLength = response;
-      if (this.client) {
-        this.client.send(
-          JSON.stringify({
-            videoSrc: this.videoSrc,
-            videoLength: this.videoLength,
-          }),
-          'loadNewVideo'
-        );
-      }
-      return 'Changed video successfully';
+
+      this.emitEvent(Subjects.LoadNewVideo, {
+        videoSrc: this.videoSrc,
+        videoTime: this.videoTime,
+        isPlaying: this.isPlaying,
+      });
+      return { msg: 'Changed video successfully' };
     } catch (err) {
-      console.log(err);
-      return 'Video doesnt exist';
+      return { err: 'Video doesnt exist' };
     }
   }
 
-  pauseVideo(time: number) {
-    this.isPlaying = false;
-    this.videoTime = time;
+  getVideo(): VideoEvent {
+    return {
+      videoSrc: this.videoSrc,
+      videoTime: this.videoTime,
+      isPlaying: this.isPlaying,
+    };
+  }
+
+  pauseVideo() {
+    if (this.isPlaying) {
+      clearInterval(this.intervalId!);
+      this.intervalId = undefined;
+      this.isPlaying = false;
+      this.emitEvent(Subjects.PauseVideo, {
+        isPlaying: this.isPlaying,
+        videoTime: this.videoTime,
+      });
+    }
+    return { msg: `Video paused, time passed: ${this.videoTime.toFixed(1)}` };
   }
 
   startVideo() {
-    this.isPlaying = true;
+    if (!this.isPlaying) {
+      this.isPlaying = true;
+      this.intervalId = setInterval(() => (this.videoTime += 0.1), 100);
+      this.emitEvent(Subjects.StartVideo, { isPlaying: this.isPlaying });
+      return { msg: 'Starting video' };
+    } else {
+      return { msg: 'Video already started' };
+    }
+  }
+
+  emitEvent(subject: Subjects, data: VideoEvent) {
+    if (this.client) {
+      this.client.send(JSON.stringify(data), subject);
+    }
   }
 }
 
