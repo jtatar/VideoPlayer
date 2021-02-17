@@ -6,6 +6,7 @@ import { setVideoRouter } from './routes/set';
 import { updatesVideoRouter } from './routes/update';
 import { startVideoRouter } from './routes/start';
 import { pauseVideoRouter } from './routes/stop';
+import { seekVideoRouter } from './routes/seek';
 
 const app = express();
 app.use(function (req, res, next) {
@@ -21,6 +22,7 @@ app.use(json());
 
 app.use(startVideoRouter);
 app.use(pauseVideoRouter);
+app.use(seekVideoRouter);
 app.use(updatesVideoRouter);
 app.use(indexVideoRouter);
 app.use(setVideoRouter);

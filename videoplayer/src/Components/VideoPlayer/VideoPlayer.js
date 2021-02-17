@@ -3,19 +3,20 @@ import axios from 'axios';
 import { Subjects } from '@jtatvideo/common';
 import ReactPlayer from 'react-player';
 
-const VideoPlayer = () => {
+const VideoPlayer = ({ requestUrl }) => {
   const [videoSrc, setvideoSrc] = useState('');
   const [videoTime, setvideoTime] = useState(0);
   const [isPlaying, setisPlaying] = useState(false);
   const myPlayer = useRef(null);
 
   useEffect(async () => {
-    const es = new EventSource('http://localhost:3001/api/updates');
+    const es = new EventSource(`${requestUrl}/api/updates`);
     es.addEventListener(Subjects.LoadNewVideo, (e) => loadNewVideo(e));
     es.addEventListener(Subjects.PauseVideo, (e) => pauseVideo(e));
     es.addEventListener(Subjects.StartVideo, (e) => startVideo(e));
+    es.addEventListener(Subjects.SeekVideo, (e) => seekVideo(e));
 
-    const response = await axios.get('http://localhost:3001/api/video');
+    const response = await axios.get(`${requestUrl}/api/video`);
     const { videoSrc, videoTime, isPlaying } = response.data;
     setvideoSrc(videoSrc);
     setvideoTime(videoTime);
@@ -45,6 +46,12 @@ const VideoPlayer = () => {
   const startVideo = (e) => {
     setisPlaying(true);
     console.log(myPlayer.current);
+  };
+
+  const seekVideo = (e) => {
+    const { videoTime } = JSON.parse(e.data);
+    setvideoTime(videoTime);
+    myPlayer.current.seekTo(videoTime);
   };
 
   return (

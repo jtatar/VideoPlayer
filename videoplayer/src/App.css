@@ -6,3 +6,23 @@
   overflow: hidden;
   align-content: center;
 }
+
+.mainSite {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.mainButton {
+  height: 150px;
+  width: 200px;
+  margin: 10px;
+  border-radius: 5px;
+  border: 2px solid white;
+}
+
+a {
+  text-decoration: none;
+}

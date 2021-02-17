@@ -103,6 +103,11 @@ class VideoPlayer {
     }
   }
 
+  seekVideo(time: number) {
+    this.videoTime = time;
+    this.emitEvent(Subjects.SeekVideo, { videoTime: this.videoTime });
+  }
+
   emitEvent(subject: Subjects, data: VideoEvent) {
     if (this.client) {
       this.client.send(JSON.stringify(data), subject);

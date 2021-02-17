@@ -1,5 +1,4 @@
 import React from 'react';
-import '../../../node_modules/video-react/dist/video-react.css';
 import './Chat.css';
 
 const Chat = () => {
