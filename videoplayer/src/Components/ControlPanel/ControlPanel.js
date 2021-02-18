@@ -9,47 +9,62 @@ const ControlPanel = ({ requestUrl }) => {
   const [messageLog, setmessageLog] = useState(null);
 
   const setResponseText = (response) => {
-    const { msg, err } = response.data;
-    if (msg) {
-      setmessageLog(<p className="message">{msg}</p>);
-    } else {
-      setmessageLog(<p className="error">{err}</p>);
-    }
+    const { msg } = response.data;
+    setmessageLog(<p className="message">{msg}</p>);
+  };
+
+  const setErrorsText = (response) => {
+    const { errors } = response.data;
+    setmessageLog(
+      errors.map((err) => (
+        <p className="error" key={err.message}>
+          {err.message}
+        </p>
+      ))
+    );
   };
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    //Do request to api
-    const response = await axios.post(`${requestUrl}/api/video`, {
-      videoSrc: videoSrc,
-    });
-    setResponseText(response);
+    try {
+      const response = await axios.post(`${requestUrl}/api/video`, {
+        videoSrc: videoSrc,
+      });
+      setResponseText(response);
+    } catch (err) {
+      setErrorsText(err.response);
+    }
   };
 
   const onStart = async () => {
-    const response = await axios.get(`${requestUrl}/api/video/start`);
-    setResponseText(response);
-    const { err } = response.data;
-    if (!err) {
+    try {
+      const response = await axios.get(`${requestUrl}/api/video/start`);
       setPlaying(true);
+      setResponseText(response);
+    } catch (err) {
+      setErrorsText(err.response);
     }
   };
 
   const onPause = async () => {
-    const response = await axios.get(`${requestUrl}/api/video/pause`);
-    setResponseText(response);
-    const { err } = response.data;
-    if (!err) {
+    try {
+      const response = await axios.get(`${requestUrl}/api/video/pause`);
+      setResponseText(response);
       setPlaying(false);
+    } catch (err) {
+      setErrorsText(err.response);
     }
   };
 
   const onSeek = async (time) => {
-    console.log(time);
-    const response = await axios.post(`${requestUrl}/api/video/seek`, {
-      seekTime: time,
-    });
-    setResponseText(response);
+    try {
+      const response = await axios.post(`${requestUrl}/api/video/seek`, {
+        seekTime: time,
+      });
+      setResponseText(response);
+    } catch (err) {
+      setResponseText(err.response);
+    }
   };
 
   return (

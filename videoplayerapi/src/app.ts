@@ -7,6 +7,8 @@ import { updatesVideoRouter } from './routes/update';
 import { startVideoRouter } from './routes/start';
 import { pauseVideoRouter } from './routes/stop';
 import { seekVideoRouter } from './routes/seek';
+import { errorHandler } from './middlewares/error-handler';
+import { NotFoundError } from './errors/not-found-error';
 
 const app = express();
 app.use(function (req, res, next) {
@@ -28,7 +30,9 @@ app.use(indexVideoRouter);
 app.use(setVideoRouter);
 
 app.all('*', async (req, res) => {
-  res.status(404).send({ message: 'Not Found' });
+  throw new NotFoundError();
 });
+
+app.use(errorHandler);
 
 export { app };

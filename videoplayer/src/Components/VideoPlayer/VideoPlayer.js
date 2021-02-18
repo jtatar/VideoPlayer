@@ -21,10 +21,8 @@ const VideoPlayer = ({ requestUrl }) => {
     setvideoSrc(videoSrc);
     setvideoTime(videoTime);
     if (videoTime > 0) {
-      console.log(myPlayer);
       myPlayer.current.seekTo(videoTime);
     }
-    console.log(videoTime);
     setisPlaying(isPlaying);
   }, []);
 
@@ -33,7 +31,6 @@ const VideoPlayer = ({ requestUrl }) => {
     setvideoSrc(videoSrc);
     setvideoTime(videoTime);
     setisPlaying(isPlaying);
-    myPlayer.current.seekTo(0);
   };
 
   const pauseVideo = (e) => {
@@ -45,7 +42,6 @@ const VideoPlayer = ({ requestUrl }) => {
 
   const startVideo = (e) => {
     setisPlaying(true);
-    console.log(myPlayer.current);
   };
 
   const seekVideo = (e) => {

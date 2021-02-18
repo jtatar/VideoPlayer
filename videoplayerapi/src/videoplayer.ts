@@ -1,6 +1,8 @@
-import { getVideoDurationInSeconds } from 'get-video-duration';
+import ReactPlayer from 'react-player';
 import { Subjects } from '@jtatvideo/common';
 import SSE from 'express-sse-ts';
+import { NotFoundError } from './errors/not-found-error';
+import { BadRequestError } from './errors/bad-request-error';
 
 interface VideoEvent {
   videoSrc?: string;
@@ -12,7 +14,6 @@ class VideoPlayer {
   private _videoSrc = 'https://media.w3.org/2010/05/sintel/trailer_hd.mp4';
   private _isPlaying = false;
   private _videoTime = 0;
-  private _videoLength = 0;
   private intervalId: NodeJS.Timeout | undefined;
   private client?: SSE;
 
@@ -37,28 +38,20 @@ class VideoPlayer {
     this._videoTime = value;
   }
 
-  get videoLength() {
-    return this._videoLength;
-  }
-  set videoLength(value: number) {
-    this._videoLength = value;
-  }
-
   initializeClient(initializedClient: SSE) {
     this.client = initializedClient;
   }
 
   async loadNewVideo(src: string) {
-    try {
-      if (this.intervalId) {
-        clearInterval(this.intervalId);
-        this.intervalId = undefined;
-      }
-      const response = await getVideoDurationInSeconds(src);
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = undefined;
+    }
+    const response = await ReactPlayer.canPlay(src);
+    if (response) {
       this._videoSrc = src;
       this.videoTime = 0;
       this.isPlaying = false;
-      this.videoLength = response;
 
       this.emitEvent(Subjects.LoadNewVideo, {
         videoSrc: this.videoSrc,
@@ -66,8 +59,8 @@ class VideoPlayer {
         isPlaying: this.isPlaying,
       });
       return { msg: 'Changed video successfully' };
-    } catch (err) {
-      return { err: 'Video doesnt exist' };
+    } else {
+      throw new NotFoundError();
     }
   }
 
@@ -99,13 +92,14 @@ class VideoPlayer {
       this.emitEvent(Subjects.StartVideo, { isPlaying: this.isPlaying });
       return { msg: 'Starting video' };
     } else {
-      return { msg: 'Video already started' };
+      throw new BadRequestError('Video already started');
     }
   }
 
   seekVideo(time: number) {
     this.videoTime = time;
     this.emitEvent(Subjects.SeekVideo, { videoTime: this.videoTime });
+    return { msg: `Seek time to ${time}` };
   }
 
   emitEvent(subject: Subjects, data: VideoEvent) {
