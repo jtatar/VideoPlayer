@@ -6,7 +6,9 @@ import VideoPlayer from './Components/VideoPlayer/VideoPlayer';
 import Chat from './Components/Chat/Chat';
 import ControlPanel from './Components/ControlPanel/ControlPanel';
 
+//TODO env var not working on react app
 const requestUrl = process.env.API_URL || 'http://localhost:3001';
+const siteUrl = process.env.SITE_URL || 'localhost';
 const twitchName = 'metexo';
 
 function App() {
@@ -16,7 +18,7 @@ function App() {
         <Switch>
           <Route path="/videoplayer">
             <VideoPlayer requestUrl={requestUrl}></VideoPlayer>
-            <Chat twitchName={twitchName}></Chat>
+            <Chat twitchName={twitchName} requestUrl={siteUrl}></Chat>
           </Route>
           <Route path="/controlpanel">
             <ControlPanel requestUrl={requestUrl}></ControlPanel>
