@@ -6,7 +6,7 @@ import VideoPlayer from './Components/VideoPlayer/VideoPlayer';
 import Chat from './Components/Chat/Chat';
 import ControlPanel from './Components/ControlPanel/ControlPanel';
 
-const requestUrl = 'http://localhost:3001';
+const requestUrl = process.env.API_URL || 'http://localhost:3001';
 const twitchName = 'metexo';
 
 function App() {
