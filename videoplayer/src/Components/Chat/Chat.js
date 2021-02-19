@@ -5,7 +5,7 @@ const Chat = ({ twitchName, siteUrl }) => {
   return (
     <div className="chatWrapper">
       <iframe
-        src={`https://www.twitch.tv/embed/${twitchName}/chat?parent=${siteUrl}&darkpopout`}
+        src={`https://www.twitch.tv/embed/metexo/chat?parent=localhost&darkpopout`}
         height="100%"
         width="100%"
       ></iframe>
