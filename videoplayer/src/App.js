@@ -7,6 +7,7 @@ import Chat from './Components/Chat/Chat';
 import ControlPanel from './Components/ControlPanel/ControlPanel';
 
 const requestUrl = 'http://localhost:3001';
+const twitchName = 'metexo';
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
         <Switch>
           <Route path="/videoplayer">
             <VideoPlayer requestUrl={requestUrl}></VideoPlayer>
-            <Chat></Chat>
+            <Chat twitchName={twitchName}></Chat>
           </Route>
           <Route path="/controlpanel">
             <ControlPanel requestUrl={requestUrl}></ControlPanel>

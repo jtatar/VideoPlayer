@@ -68,34 +68,32 @@ const ControlPanel = ({ requestUrl }) => {
   };
 
   return (
-    <div className="controlPanelWrapper">
-      <div className="controlPanel">
-        <ReactPlayer
-          url={videoSrc}
-          controls={true}
-          playing={playing}
-          muted={true}
-          onSeek={onSeek}
+    <div className="controlPanel">
+      <ReactPlayer
+        url={videoSrc}
+        controls={true}
+        playing={playing}
+        muted={true}
+        onSeek={onSeek}
+      />
+      <form onSubmit={onSubmit} className="form">
+        <label>Movie source</label>
+        <input
+          value={videoSrc}
+          onChange={(e) => setvideoSrc(e.target.value)}
+          className="formInput"
         />
-        <form onSubmit={onSubmit} className="form">
-          <label>Movie source</label>
-          <input
-            value={videoSrc}
-            onChange={(e) => setvideoSrc(e.target.value)}
-            className="formInput"
-          />
-          <button className="button">Change video</button>
-        </form>
-        <div className="controlButtons">
-          <button onClick={onStart} className="button">
-            Play
-          </button>
-          <button onClick={onPause} className="button">
-            Pause
-          </button>
-        </div>
-        <div className="logs">{messageLog}</div>
+        <button className="button">Change video</button>
+      </form>
+      <div className="controlButtons">
+        <button onClick={onStart} className="button">
+          Play
+        </button>
+        <button onClick={onPause} className="button">
+          Pause
+        </button>
       </div>
+      <div className="logs">{messageLog}</div>
     </div>
   );
 };
