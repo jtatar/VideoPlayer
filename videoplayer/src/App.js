@@ -6,19 +6,21 @@ import VideoPlayer from './Components/VideoPlayer/VideoPlayer';
 import Chat from './Components/Chat/Chat';
 import ControlPanel from './Components/ControlPanel/ControlPanel';
 
-//TODO env var not working on react app
-const requestUrl = process.env.API_URL || 'http://localhost:3001';
-const siteUrl = process.env.SITE_URL || 'localhost';
-const twitchName = 'metexo';
-
 function App() {
+  console.log(process.env.NODE_ENV);
+  const requestUrl =
+    process.env.NODE_ENV === 'development'
+      ? 'http://localhost:3001'
+      : 'https://movieplayer-api.herokuapp.com';
+  const twitchName = 'metexo';
+
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <div className="wrapper">
         <Switch>
           <Route path="/videoplayer">
             <VideoPlayer requestUrl={requestUrl}></VideoPlayer>
-            <Chat twitchName={twitchName} requestUrl={siteUrl}></Chat>
+            <Chat twitchName={twitchName}></Chat>
           </Route>
           <Route path="/controlpanel">
             <ControlPanel requestUrl={requestUrl}></ControlPanel>
