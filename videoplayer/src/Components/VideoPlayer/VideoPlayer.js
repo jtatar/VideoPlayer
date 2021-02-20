@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { Subjects } from '@jtatvideo/common';
 import ReactPlayer from 'react-player';
+import './VideoPlayer.css';
 
 const VideoPlayer = ({ requestUrl }) => {
   const [videoSrc, setvideoSrc] = useState('');
@@ -51,15 +52,17 @@ const VideoPlayer = ({ requestUrl }) => {
   };
 
   return (
-    <ReactPlayer
-      ref={myPlayer}
-      url={videoSrc}
-      muted={true}
-      width="100%"
-      height="100vh"
-      playing={isPlaying}
-      controls={true}
-    />
+    <div className="videoWrapper">
+      <ReactPlayer
+        ref={myPlayer}
+        url={videoSrc}
+        muted={true}
+        width="100%"
+        height="100%"
+        playing={isPlaying}
+        controls={true}
+      />
+    </div>
   );
 };
 
