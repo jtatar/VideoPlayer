@@ -2,12 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { Subjects } from '@jtatvideo/common';
 import ReactPlayer from 'react-player';
+import VideoPlayIcon from '../../Images/video-play-button.png';
 import './VideoPlayer.css';
 
 const VideoPlayer = ({ requestUrl }) => {
   const [videoSrc, setvideoSrc] = useState('');
   const [videoTime, setvideoTime] = useState(0);
   const [isPlaying, setisPlaying] = useState(false);
+  const [userInteraction, setuserInteraction] = useState(false);
   const myPlayer = useRef(null);
 
   useEffect(async () => {
@@ -16,16 +18,22 @@ const VideoPlayer = ({ requestUrl }) => {
     es.addEventListener(Subjects.PauseVideo, (e) => pauseVideo(e));
     es.addEventListener(Subjects.StartVideo, (e) => startVideo(e));
     es.addEventListener(Subjects.SeekVideo, (e) => seekVideo(e));
+  }, []);
 
+  useEffect(async () => {
     const response = await axios.get(`${requestUrl}/api/video`);
     const { videoSrc, videoTime, isPlaying } = response.data;
     setvideoSrc(videoSrc);
     setvideoTime(videoTime);
-    if (videoTime > 0) {
-      myPlayer.current.seekTo(videoTime);
-    }
+    //Looking for better solution
+    setTimeout(() => {
+      if (videoTime > 0 && myPlayer.current) {
+        console.log('ustawiam czas');
+        myPlayer.current.seekTo(videoTime + 1);
+      }
+    }, 1000);
     setisPlaying(isPlaying);
-  }, []);
+  }, [userInteraction]);
 
   const loadNewVideo = (e) => {
     const { videoSrc, videoTime, isPlaying } = JSON.parse(e.data);
@@ -51,17 +59,31 @@ const VideoPlayer = ({ requestUrl }) => {
     myPlayer.current.seekTo(videoTime);
   };
 
+  const showPlayer = () => {
+    setuserInteraction(true);
+  };
+
   return (
     <div className="videoWrapper">
-      <ReactPlayer
-        ref={myPlayer}
-        url={videoSrc}
-        muted={true}
-        width="100%"
-        height="100%"
-        playing={isPlaying}
-        controls={true}
-      />
+      {userInteraction ? (
+        <ReactPlayer
+          ref={myPlayer}
+          url={videoSrc}
+          muted={false}
+          volume={0.8}
+          width="100%"
+          height="100%"
+          playing={isPlaying}
+          controls={true}
+        />
+      ) : (
+        <input
+          type="image"
+          src={VideoPlayIcon}
+          className="playButton"
+          onClick={showPlayer}
+        ></input>
+      )}
     </div>
   );
 };
