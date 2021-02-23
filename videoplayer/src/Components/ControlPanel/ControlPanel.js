@@ -14,14 +14,18 @@ const ControlPanel = ({ requestUrl }) => {
   };
 
   const setErrorsText = (response) => {
-    const { errors } = response.data;
-    setmessageLog(
-      errors.map((err) => (
-        <p className="error" key={err.message}>
-          {err.message}
-        </p>
-      ))
-    );
+    try {
+      const { errors } = response.data;
+      setmessageLog(
+        errors.map((err) => (
+          <p className="error" key={err.message}>
+            {err.message}
+          </p>
+        ))
+      );
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const onSubmit = async (event) => {

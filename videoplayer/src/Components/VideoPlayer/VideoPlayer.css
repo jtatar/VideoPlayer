@@ -14,5 +14,6 @@
 @media (max-width: 700px) {
   .videoWrapper {
     height: auto;
+    min-height: 300px;
   }
 }

@@ -21,18 +21,22 @@ const VideoPlayer = ({ requestUrl }) => {
   }, []);
 
   useEffect(async () => {
-    const response = await axios.get(`${requestUrl}/api/video`);
-    const { videoSrc, videoTime, isPlaying } = response.data;
-    setvideoSrc(videoSrc);
-    setvideoTime(videoTime);
-    //Looking for better solution
-    setTimeout(() => {
-      if (videoTime > 0 && myPlayer.current) {
-        console.log('ustawiam czas');
-        myPlayer.current.seekTo(videoTime + 1);
-      }
-    }, 1000);
-    setisPlaying(isPlaying);
+    try {
+      const response = await axios.get(`${requestUrl}/api/video`);
+      const { videoSrc, videoTime, isPlaying } = response.data;
+      setvideoSrc(videoSrc);
+      setvideoTime(videoTime);
+      //Looking for better solution
+      setTimeout(() => {
+        if (videoTime > 0 && myPlayer.current) {
+          myPlayer.current.seekTo(videoTime + 1);
+          console.log(myPlayer.current);
+        }
+      }, 1000);
+      setisPlaying(isPlaying);
+    } catch (err) {
+      console.log(err);
+    }
   }, [userInteraction]);
 
   const loadNewVideo = (e) => {
@@ -70,7 +74,7 @@ const VideoPlayer = ({ requestUrl }) => {
           ref={myPlayer}
           url={videoSrc}
           muted={false}
-          volume={0.8}
+          volume={0.5}
           width="100%"
           height="100%"
           playing={isPlaying}
